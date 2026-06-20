@@ -108,18 +108,24 @@ GET the purge URLs once:
 `https://purge.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tokens.css`
 (and the same for `tunnel-figure.js`).
 
-**Stop adding this repo to the Claude Code window** by installing it as a
-personal skill once:
+**Stop adding this repo to the Claude Code window** by installing it as a skill.
+A ready-to-copy thin version lives in [`dist/skill/`](dist/skill/) — it links
+the CDN assets and points at this brief, so it never goes stale. For the
+**terminal**, install it once:
 
 ```bash
 mkdir -p ~/.claude/skills/tunnel-aesthetic
-curl -fsSL https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/SKILL.md \
+curl -fsSL https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/dist/skill/SKILL.md \
   -o ~/.claude/skills/tunnel-aesthetic/SKILL.md
 ```
 
-Then `tunnel-aesthetic` is available in every session everywhere, and (because
-the brief says so) new pages come out linking the CDN, not inlining. Full
-details in [`SKILL.md`](SKILL.md) section 6.
+For **Claude Code on the web**, a cloud session only sees what's in the repo or
+placed by the environment setup script — not your laptop's `~/.claude`. So
+commit `dist/skill/` into the target repo as `.claude/skills/tunnel-aesthetic/`,
+or have the environment's setup script fetch it (use the `raw.githubusercontent.com`
+URL there — jsDelivr isn't on the cloud allowlist by default). See
+[`dist/skill/README.md`](dist/skill/README.md) for the table, and
+[`SKILL.md`](SKILL.md) section 6 for the full distribution notes.
 
 See [`SKILL.md`](SKILL.md) for the full rules (one red `--route` element per
 view, amber only in the figure, square corners, real labels, the fixed logo +
