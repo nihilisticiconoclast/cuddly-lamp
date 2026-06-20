@@ -18,7 +18,7 @@ the OS tunnel symbol and quantum tunnelling as one picture.
 ## What's in the repo
 
 ```
-cuddly-lamp/
+tunnel-aesthetic/
 ├─ SKILL.md                    ← the design-system brief (rules + how to apply)
 ├─ assets/
 │  ├─ tokens.css               ← the locked layer: palette, type, hard edges
