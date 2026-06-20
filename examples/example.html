@@ -3,74 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Statistical Rethinking — Notes</title>
+<title>The Three-Card Problem — Notes</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="../assets/tokens.css">
 <style>
-  /* page-specific layout only — all colour/type/edges come from tokens.css */
-  header.wrap{padding-top:clamp(36px,6vw,84px)}
-  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
-  @media (max-width:860px){.hero{grid-template-columns:1fr}}
-  .topline{display:flex;justify-content:space-between;align-items:baseline;border-bottom:var(--rule);padding-bottom:14px;margin-bottom:clamp(28px,5vw,56px)}
-  .topline .mark{font-family:var(--font-data);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--contour)}
-  .topline nav a{margin-left:1.4rem;font-family:var(--font-data);font-size:.82rem}
-  .meta-row{display:flex;gap:1.6rem;flex-wrap:wrap;font-family:var(--font-data);font-size:.82rem;color:var(--contour);margin-top:1.4rem}
-  section.wrap{padding-top:0}
-  .lead-figures{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:8px}
-  @media (max-width:860px){.lead-figures{grid-template-columns:1fr}}
-  footer.wrap{border-top:var(--rule);margin-top:clamp(40px,6vw,80px);color:var(--contour)}
+  /* page layout only — colour/type/edges all come from tokens.css */
+  .masthead{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-bottom:var(--rule);padding-bottom:16px;margin-bottom:clamp(28px,5vw,56px)}
+  .brand{display:flex;align-items:center;gap:.7rem}
+  .brand .wordmark{font-family:var(--font-data);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--contour);line-height:1.3}
+  .masthead nav a{margin-left:1.3rem;font-family:var(--font-data);font-size:.8rem}
+  .answer{font-family:var(--font-display);font-size:var(--step-2);color:var(--route)}
+  table.cards{border-collapse:collapse;margin:1.4rem 0;font-family:var(--font-data);font-size:.9rem}
+  table.cards th,table.cards td{text-align:left;padding:.5rem 1.4rem .5rem 0;border-top:var(--rule)}
+  table.cards th{color:var(--contour);font-weight:500;letter-spacing:.06em}
+  table.cards tr:last-child td{border-bottom:var(--rule)}
+  .note{color:var(--contour);font-family:var(--font-data);font-size:.82rem;margin-top:2.5rem}
 </style>
 </head>
-<body data-seed="statistical-rethinking">
-  <header class="wrap">
-    <div class="topline">
-      <span class="mark">Atlas · Terrain × Phase</span>
-      <nav><a href="#">Notes</a><a href="#">Models</a><a href="#">Index</a></nav>
-    </div>
+<body data-seed="three-card-problem">
+  <main class="wrap">
 
-    <div class="hero">
-      <div>
-        <p class="eyebrow">Chapter 9 · Markov Chain Monte Carlo</p>
-        <h1>Sampling is a walk across a landscape you can’t see.</h1>
-        <p class="lede">A chain doesn’t evaluate the posterior everywhere — it
-        moves through it, the way a walker crosses terrain. The hard regions are
-        barriers; the typical set is the valley floor; tuning is just learning
-        the line through the pass.</p>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:1.6rem">
-          <a class="btn btn--route" href="#read">Read the chapter</a>
-          <a class="btn" href="#code">Stan model</a>
-        </div>
-        <div class="meta-row">
-          <span>4 chains</span><span>2000 warmup</span><span>R̂ ≤ 1.01</span><span>SO 84 05</span>
-        </div>
+    <div class="masthead">
+      <div class="brand">
+        <!-- the signature: a SMALL masthead mark, the recurring doodle -->
+        <span class="sig" id="sig"></span>
+        <span class="wordmark">Notes<br>Probability</span>
       </div>
-      <div class="figure" id="sig"></div>
+      <nav><a href="#">Index</a><a href="#">Bayes</a><a href="#">Sampling</a></nav>
     </div>
-  </header>
 
-  <section class="wrap" id="read">
+    <p class="eyebrow">Statistical Rethinking · ways-to-produce</p>
+    <h1>One black face is showing. What are the odds the other side is black?</h1>
+    <p class="lede">Three cards in a bag: one black on both sides, one black on
+    one side and white on the other, one white on both. You draw one at random,
+    drop it on the table, and the face you can see is black. The intuition says
+    one-half. The intuition is wrong.</p>
+
     <hr>
-    <h2>The barrier, drawn two ways</h2>
-    <p>On a map, the dashed line through the ridge is a tunnel: the path goes
-    <em>through</em> the high ground, not over it. In quantum mechanics the same
-    figure describes an amplitude that decays as <code>ψ ∝ e^(−κx)</code> inside
-    the wall and re-emerges on the far side. The wider the barrier, the steeper
-    the decay and the smaller what survives — which is exactly the intuition for
-    why a poorly-tuned sampler stalls at a region of low probability mass.</p>
-    <p>Nothing on this page is decoration: the contours are a real field
-    contoured with marching squares, the inset is a genuine WKB sketch, and the
-    grid reference and spot height are part of the survey, not ornament.</p>
-  </section>
 
-  <footer class="wrap">
-    <p class="caption">Figure seeded from the page slug — every page in the
-    atlas carries a different landscape of the same family. Set
-    <code>data-seed</code> (or change the slug) to redraw.</p>
-  </footer>
+    <h2>Count the ways, not the cards</h2>
+    <p>The trap is conditioning on the card when you should condition on the
+    <em>face</em>. A black face you could be looking at has several equally
+    likely origins — so count those, not the three cards.</p>
+
+    <table class="cards">
+      <tr><th>card</th><th>ways to show a black face</th></tr>
+      <tr><td>black / black</td><td>2</td></tr>
+      <tr><td>black / white</td><td>1</td></tr>
+      <tr><td>white / white</td><td>0</td></tr>
+    </table>
+
+    <p>Three ways produce the black face you’re seeing, and two of them belong to
+    the black/black card — whose reverse is also black. So the answer is
+    <span class="answer">2 / 3</span>, not one-half. This is Bayes’ rule wearing
+    work clothes: the posterior is just the count of paths consistent with the
+    evidence, normalised.</p>
+
+    <div style="margin-top:1.8rem"><a class="btn btn--route" href="#">Next: the globe toss</a></div>
+
+    <p class="note">Notes · Probability — an ongoing set.</p>
+  </main>
 
   <script src="../assets/tunnel-figure.js"></script>
   <script>
-    // seed = stable + unique per page (slug here; falls back to path/title)
+    // small, silent mark, seeded from the page (default 'mark' variant)
     var seed = document.body.dataset.seed || location.pathname || document.title;
     document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(seed);
   </script>

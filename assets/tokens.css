@@ -87,8 +87,24 @@ hr,.rule{border:0;height:0;border-top:var(--rule);margin:2.5rem 0}
 .btn--route:hover{opacity:.92}
 .btn:focus-visible{outline:2px solid var(--incident);outline-offset:3px}
 
-/* the signature figure container — set innerHTML to TunnelFigure.tunnelFigureSVG(seed) */
-.figure{display:block;width:100%;max-width:640px;margin-inline:auto}
+/* ── the signature ────────────────────────────────────────────────────────
+   DEFAULT is the quiet mark: a small recurring doodle, NOT a hero image.
+   Fill any of these with TunnelFigure.tunnelFigureSVG(seed[, {variant}]). */
+
+/* .sig — the small marginal mark (default). Put it in a masthead corner or a
+   footer. Keep it small; it is a colophon, not a centrepiece. */
+.sig{display:block;width:clamp(72px,8vw,116px);height:auto;line-height:0}
+.sig svg{width:100%;height:auto;display:block}
+
+/* .sig-bg — a faint full-bleed watermark (variant:'background'). A whisper of
+   texture behind content; never competes with text. */
+.sig-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.06}
+.sig-bg svg{width:100%;height:100%;display:block;object-fit:cover}
+
+/* .figure — the FULL explanatory figure (variant:'full'). Use only on pages
+   genuinely about terrain / sampling / tunnelling, and even then keep it inline
+   beside content, never a full-screen boxed image with a self-describing caption. */
+.figure{display:block;width:100%;max-width:560px;margin-inline:auto}
 .figure svg{width:100%;height:auto;display:block}
 
 /* generic page scaffold helpers (optional) */
