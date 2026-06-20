@@ -90,6 +90,37 @@ const logo   = tunnelFigureSVG(null, { variant: "mark" });               // fixe
 const doodle = tunnelFigureSVG("my-page-slug", { variant: "doodle" });   // per-page, deterministic
 ```
 
+## Use it in another repo (link, don't inline)
+
+This is a style guide, so there should be **one source of truth**. Don't copy
+the files into other repos or paste them inline — link the hosted copy, served
+from this public repo via jsDelivr (tracking `@main`), so an update here reaches
+every page:
+
+```html
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tokens.css">
+<script src="https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tunnel-figure.js"></script>
+```
+
+jsDelivr caches `@main` for up to 7 days; after pushing an update you want live,
+GET the purge URLs once:
+`https://purge.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tokens.css`
+(and the same for `tunnel-figure.js`).
+
+**Stop adding this repo to the Claude Code window** by installing it as a
+personal skill once:
+
+```bash
+mkdir -p ~/.claude/skills/tunnel-aesthetic
+curl -fsSL https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/SKILL.md \
+  -o ~/.claude/skills/tunnel-aesthetic/SKILL.md
+```
+
+Then `tunnel-aesthetic` is available in every session everywhere, and (because
+the brief says so) new pages come out linking the CDN, not inlining. Full
+details in [`SKILL.md`](SKILL.md) section 6.
+
 See [`SKILL.md`](SKILL.md) for the full rules (one red `--route` element per
 view, amber only in the figure, square corners, real labels, the fixed logo +
 per-page doodle signature) and [`examples/example.html`](examples/example.html)

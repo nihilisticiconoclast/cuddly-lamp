@@ -152,8 +152,11 @@ tunnel-aesthetic/
 
 ## 4. How to apply it
 
-1. Link the locked layer: `<link rel="stylesheet" href="assets/tokens.css">`
-   (adjust the path; copy `assets/` next to the page if needed).
+1. **Link the shared assets from the CDN — do NOT paste/inline them** (see
+   section 6). In short: one `<link>` for `tokens.css` and one `<script>` for
+   `tunnel-figure.js`, both from `cdn.jsdelivr.net/gh/...@main`. Inlining is what
+   makes every page a stale fork; linking means an update to this repo reaches
+   every page.
 2. Build the page with the token classes: `.wrap`, `.eyebrow`, `h1`, `.lede`,
    `.btn` / `.btn--route`, `.figure`, hairline `hr`/`.rule`, `.caption`.
 3. Mount the signature once, seeded from the page (section 2). Lead with it
@@ -187,3 +190,68 @@ function Signature({ seed }) {
 - [ ] No self-describing caption or physics labels on a content page; `full` variant only where the topic warrants it.
 - [ ] Labels are real; copy is precise, not placeholder.
 - [ ] It does not resemble the generic cream-coral / dark-acid / rounded-SaaS look.
+- [ ] The assets are **linked from the CDN, not inlined** (section 6).
+
+---
+
+## 6. Using Tunnel in another repo (link, never inline)
+
+The whole point of a style guide is one source of truth. **Do not copy
+`tokens.css` / `tunnel-figure.js` into the consuming repo, and do not inline
+them into the HTML.** Link the single hosted copy so an update here propagates
+to every page everywhere.
+
+The assets are served straight from this public repo via jsDelivr, tracking
+`@main` (latest):
+
+```html
+<!-- in <head> -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tokens.css">
+
+<!-- the fixed house logo + a per-page doodle -->
+<span class="sig" id="sig"></span>
+<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+
+<!-- before </body> -->
+<script src="https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tunnel-figure.js"></script>
+<script>
+  document.getElementById('sig').innerHTML =
+    TunnelFigure.tunnelFigureSVG(null, { variant: 'mark' });
+  var seed = document.body.dataset.seed || location.pathname || document.title;
+  document.getElementById('doodle').innerHTML =
+    TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
+</script>
+```
+
+That is the *entire* integration. Any consuming page is just: link those two
+URLs, add the token classes, mount the logo + doodle.
+
+**Propagation note (important).** jsDelivr caches `@main` at the edge for up to
+7 days, so a change to this repo will not appear instantly. After pushing an
+update you want live, purge the cache (one-time GET per file):
+
+```
+https://purge.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tokens.css
+https://purge.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tunnel-figure.js
+```
+
+(If you ever need a hard freeze for a specific page, pin to a tag or commit SHA
+instead of `@main` — but the default here is "track latest".)
+
+### Make it apply automatically (install as a skill)
+
+So you never have to add this repo to the Claude Code window again, install it
+as a **personal skill** once, on your machine:
+
+```bash
+mkdir -p ~/.claude/skills/tunnel-aesthetic
+curl -fsSL https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/SKILL.md \
+  -o ~/.claude/skills/tunnel-aesthetic/SKILL.md
+```
+
+After that, every Claude Code session in every repo can use the `tunnel-aesthetic`
+skill automatically — and because this brief tells it to *link the CDN*, new
+pages come out referencing the shared assets instead of inlining them. Re-run the
+`curl` to pull the latest brief. (The skill is just this `SKILL.md`; the actual
+CSS/JS live on the CDN, so nothing else needs copying.)
