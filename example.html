@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistical Rethinking — Notes</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<style>
+  /* page-specific layout only — all colour/type/edges come from tokens.css */
+  header.wrap{padding-top:clamp(36px,6vw,84px)}
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center}
+  @media (max-width:860px){.hero{grid-template-columns:1fr}}
+  .topline{display:flex;justify-content:space-between;align-items:baseline;border-bottom:var(--rule);padding-bottom:14px;margin-bottom:clamp(28px,5vw,56px)}
+  .topline .mark{font-family:var(--font-data);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--contour)}
+  .topline nav a{margin-left:1.4rem;font-family:var(--font-data);font-size:.82rem}
+  .meta-row{display:flex;gap:1.6rem;flex-wrap:wrap;font-family:var(--font-data);font-size:.82rem;color:var(--contour);margin-top:1.4rem}
+  section.wrap{padding-top:0}
+  .lead-figures{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:8px}
+  @media (max-width:860px){.lead-figures{grid-template-columns:1fr}}
+  footer.wrap{border-top:var(--rule);margin-top:clamp(40px,6vw,80px);color:var(--contour)}
+</style>
+</head>
+<body data-seed="statistical-rethinking">
+  <header class="wrap">
+    <div class="topline">
+      <span class="mark">Atlas · Terrain × Phase</span>
+      <nav><a href="#">Notes</a><a href="#">Models</a><a href="#">Index</a></nav>
+    </div>
+
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Chapter 9 · Markov Chain Monte Carlo</p>
+        <h1>Sampling is a walk across a landscape you can’t see.</h1>
+        <p class="lede">A chain doesn’t evaluate the posterior everywhere — it
+        moves through it, the way a walker crosses terrain. The hard regions are
+        barriers; the typical set is the valley floor; tuning is just learning
+        the line through the pass.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:1.6rem">
+          <a class="btn btn--route" href="#read">Read the chapter</a>
+          <a class="btn" href="#code">Stan model</a>
+        </div>
+        <div class="meta-row">
+          <span>4 chains</span><span>2000 warmup</span><span>R̂ ≤ 1.01</span><span>SO 84 05</span>
+        </div>
+      </div>
+      <div class="figure" id="sig"></div>
+    </div>
+  </header>
+
+  <section class="wrap" id="read">
+    <hr>
+    <h2>The barrier, drawn two ways</h2>
+    <p>On a map, the dashed line through the ridge is a tunnel: the path goes
+    <em>through</em> the high ground, not over it. In quantum mechanics the same
+    figure describes an amplitude that decays as <code>ψ ∝ e^(−κx)</code> inside
+    the wall and re-emerges on the far side. The wider the barrier, the steeper
+    the decay and the smaller what survives — which is exactly the intuition for
+    why a poorly-tuned sampler stalls at a region of low probability mass.</p>
+    <p>Nothing on this page is decoration: the contours are a real field
+    contoured with marching squares, the inset is a genuine WKB sketch, and the
+    grid reference and spot height are part of the survey, not ornament.</p>
+  </section>
+
+  <footer class="wrap">
+    <p class="caption">Figure seeded from the page slug — every page in the
+    atlas carries a different landscape of the same family. Set
+    <code>data-seed</code> (or change the slug) to redraw.</p>
+  </footer>
+
+  <script src="../assets/tunnel-figure.js"></script>
+  <script>
+    // seed = stable + unique per page (slug here; falls back to path/title)
+    var seed = document.body.dataset.seed || location.pathname || document.title;
+    document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(seed);
+  </script>
+</body>
+</html>
