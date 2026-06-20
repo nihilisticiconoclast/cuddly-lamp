@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tunnel — figure gallery</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../assets/tokens.css">
+<style>
+  /* reference page only — colour/type/edges all come from tokens.css */
+  .grid{display:grid;gap:20px;margin:1.5rem 0 2.5rem}
+  .g-logo{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g-doodle{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .g-bg{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g-full{grid-template-columns:repeat(2,minmax(0,1fr))}
+  figure{margin:0}
+  .cell{border:1px solid var(--index)}                       /* hard-edged frame, just for the gallery */
+  .cell svg{display:block;width:100%;height:auto}
+  .cell--bg{background:var(--paper);opacity:.4}              /* mimic the .sig-bg watermark knock-down */
+  figcaption{font-family:var(--font-data);font-size:.74rem;color:var(--contour);margin-top:6px;letter-spacing:.04em}
+  .note{font-family:var(--font-data);font-size:.8rem;color:var(--contour);max-width:70ch}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow">Tunnel · house aesthetic</p>
+    <h1>Figure gallery</h1>
+    <p class="lede">A live reference for <code>tunnel-figure.js</code>. Rendered
+    from the actual assets, so it always reflects the current generator.</p>
+    <p class="note">mark = the fixed house logo (seed ignored, identical
+    everywhere). doodle / background / full = seeded per page (slug → stable, but
+    different from the next page).</p>
+
+    <hr>
+
+    <h2>mark — the fixed logo</h2>
+    <p class="note">Same picture regardless of seed. The masthead / footer brand.</p>
+    <div class="grid g-logo" id="g-logo"></div>
+
+    <h2>doodle — random per page, static once loaded</h2>
+    <p class="note">A different composition for each slug — ridge position, well
+    count (2–4) and route angle all change. Decorative; sits off-centre between
+    sections.</p>
+    <div class="grid g-doodle" id="g-doodle"></div>
+
+    <h2>background — varied + faint-but-visible</h2>
+    <p class="note">Contours only, no route. Shown here at the same opacity the
+    <code>.sig-bg</code> watermark uses.</p>
+    <div class="grid g-bg" id="g-bg"></div>
+
+    <h2>full — the explanatory figure</h2>
+    <p class="note">Composition + route + WKB inset + survey labels. Use only on
+    pages actually about terrain / sampling / tunnelling.</p>
+    <div class="grid g-full" id="g-full"></div>
+  </main>
+
+  <script src="../assets/tunnel-figure.js"></script>
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+    function cell(label, svg, cls) {
+      return '<figure><div class="cell' + (cls ? ' ' + cls : '') + '">' + svg
+           + '</div><figcaption>' + label + '</figcaption></figure>';
+    }
+    function fig(seed, opts) { return TunnelFigure.tunnelFigureSVG(seed, opts); }
+
+    var doodleSeeds = [
+      'three-card-problem', 'mcmc', 'globe-toss', 'entropy', 'linear-regression',
+      'admin-dashboard', 'pricing', 'changelog', 'about-us', 'release-notes'
+    ];
+
+    $('g-logo').innerHTML = ['seed-A', 'seed-Z', 'whatever'].map(function (s) {
+      return cell('variant:mark · seed=' + s, fig(s, { variant: 'mark', width: 320, height: 320 }));
+    }).join('');
+
+    $('g-doodle').innerHTML = doodleSeeds.map(function (s) {
+      return cell(s, fig(s, { variant: 'doodle', width: 320, height: 320 }));
+    }).join('');
+
+    $('g-bg').innerHTML = ['dashboard', 'essay', 'index'].map(function (s) {
+      return cell(s, fig(s, { variant: 'background', width: 360, height: 240 }), 'cell--bg');
+    }).join('');
+
+    $('g-full').innerHTML = ['mcmc', 'optimisation'].map(function (s) {
+      return cell(s, fig(s, { variant: 'full', width: 460, height: 400 }));
+    }).join('');
+  </script>
+</body>
+</html>
