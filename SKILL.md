@@ -6,8 +6,8 @@ description: >-
   sites, slide-style HTML, GitHub Pages, or HTML reports. It is a cartography ×
   phase-space system: a locked palette (chart-paper, contour brown, teal,
   amber, route red), Fraunces / Public Sans / IBM Plex Mono type, hard edges,
-  and a SEEDED per-page signature figure (a contour map with a route tunnelling
-  through a barrier ridge). Use whenever a frontend or visual artifact is
+  a fixed house logo and a SEEDED per-page doodle (a contour map with a route
+  tunnelling through a barrier ridge). Use whenever a frontend or visual artifact is
   requested, even if the style is not named. Do NOT use for backend code, data
   pipelines, SQL, or non-visual output.
 ---
@@ -63,55 +63,72 @@ it has left the system.
 
 ---
 
-## 2. The signature — a quiet recurring mark, NOT a centrepiece
+## 2. The signature — a fixed logo AND a per-page doodle
 
-The figure is the *connective doodle* that ties every page together — like a
-colophon or a mark in the margin. Its job is recurrence and style, not size.
+There are **two different jobs**, and they are not the same picture:
+
+- the **logo** (`mark`) — the recognisable house mark: one ridge, two wells, one
+  route tunnelling through. **Identical on every page** (the seed is ignored).
+  It's the masthead/footer brand, the thing that says "same family".
+- the **doodle** (`doodle`) — a genuinely **different little scribble per page**:
+  the ridge wanders and tilts, there are two to four wells, the route runs at a
+  different angle. Deterministic once the page loads (same slug → same doodle),
+  but noticeably unlike the next page's. It's the connective *quirk*, dropped
+  **between sections and off to one side** — never boxed, never captioned, never
+  its own section.
 
 **Hard rules (an earlier version got these wrong — do not repeat):**
-- Small and marginal by default: a masthead corner, a footer, or a faint
-  full-bleed watermark. **Never** a full-width, full-screen, or "boxed image"
-  treatment, and never its own dedicated section.
+- Small and marginal: a masthead corner / footer (logo), an off-centre scribble
+  between sections (doodle), or a faint full-bleed watermark (background).
+  **Never** a full-width, full-screen, or "boxed image" treatment, and never a
+  dedicated section.
 - **No caption on a content page.** Never print "Terrain seeded from this page",
   "barrier crossing", grid references, or `ψ ∝ e^(−κx)` on a normal page — those
   belong only to the `full` variant on pages that are *about* that.
-- The mark is **topic-neutral identity**: it may sit on any page regardless of
-  subject (a Bayesian card problem, a reading list, a dashboard). But the loud
-  `full` variant must appear only where the landscape / sampling / tunnelling
-  concept is the actual subject, or the graphic will contradict the content.
+- Topic-neutral identity: logo and doodle may sit on any page regardless of
+  subject. But the loud `full` variant must appear only where the landscape /
+  sampling / tunnelling concept is the actual subject.
 
 **Variants** (`opts.variant`):
 
-| variant          | draws                                      | use for                                                   |
-|------------------|--------------------------------------------|-----------------------------------------------------------|
-| `mark` (default) | seeded contours + the red route; silent    | every page — the recurring corner / footer doodle         |
-| `background`     | faint contours only                        | a whole-page watermark behind content                     |
-| `full`           | mark + WKB inset + labels + caption         | only pages genuinely about terrain / sampling / tunnelling |
-
-**Always seed it per page** so the terrain is deterministic for that page but
-different from the next:
+| variant          | seeded?            | draws                                       | use for                                                    |
+|------------------|--------------------|---------------------------------------------|------------------------------------------------------------|
+| `mark` (default) | **no** — fixed logo| the house mark: ridge + 2 wells + route     | the masthead / footer brand, the same on every page        |
+| `doodle`         | yes, per page      | a varied composition + the red route        | the off-centre, between-sections scribble — unique per page |
+| `background`     | yes, per page      | varied contours only (faint but visible)    | a whole-page watermark behind content                      |
+| `full`           | yes, per page      | composition + route + WKB inset + labels    | only pages genuinely about terrain / sampling / tunnelling |
 
 ```html
-<!-- the default: a small mark in the masthead corner -->
+<!-- the fixed house logo in the masthead (seed ignored) -->
 <span class="sig" id="sig"></span>
+
+<!-- the per-page doodle: off-centre, between sections -->
+<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+
 <script src="assets/tunnel-figure.js"></script>
 <script>
+  document.getElementById('sig').innerHTML =
+    TunnelFigure.tunnelFigureSVG(null, { variant: 'mark' });
   // seed = stable + unique per page (slug/path/title) — never random, never constant
   const seed = document.body.dataset.seed || location.pathname || document.title;
-  document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(seed);
+  document.getElementById('doodle').innerHTML =
+    TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
 </script>
 ```
 
-Or a faint watermark: `<div class="sig-bg" id="bg"></div>` filled with
-`tunnelFigureSVG(seed, { variant: 'background' })`. Pick **one** signature per
-page — a corner mark *or* a watermark, not both.
+Or a faint watermark instead of the doodle: `<div class="sig-bg" id="bg"></div>`
+filled with `tunnelFigureSVG(seed, { variant: 'background' })`. Pick at most one
+per-page figure — a doodle *or* a watermark, not both (the fixed logo can sit
+alongside either).
 
-Seed policy: use the page slug / path / title (stable across reloads, unique
-across pages). Never pass nothing or `Math.random()` — that breaks "static per
-page". Optional sizing: `tunnelFigureSVG(seed, { width, height })`.
+Seed policy (for `doodle` / `background` / `full`): use the page slug / path /
+title (stable across reloads, unique across pages). Never pass `Math.random()` —
+that breaks "static per page". Optional sizing: `tunnelFigureSVG(seed, { width,
+height, variant })`.
 
-Allowed to vary per page: layout, where the small mark sits, the copy. Never
-varies: the palette, the type, the hard edges, the motif itself.
+Allowed to vary per page: layout, where the figures sit, the copy, and the
+**doodle composition** itself. Never varies: the palette, the type, the hard
+edges, the motif (ridge + route tunnelling through), and the logo.
 
 ---
 
@@ -165,8 +182,8 @@ function Signature({ seed }) {
 - [ ] Fonts are Fraunces / Public Sans / IBM Plex Mono only.
 - [ ] Exactly one `--route` red element; amber appears only in the figure.
 - [ ] Corners are square (`--radius: 0`).
-- [ ] The signature is a **small mark** (corner/footer) or a faint watermark — not a hero, not full-width, not its own section.
-- [ ] It is seeded from the page slug/title (not random, not constant).
+- [ ] The fixed `mark` logo sits in a corner/footer; any per-page `doodle` is small, off-centre, between sections — not a hero, not full-width, not its own section.
+- [ ] The `doodle` / `background` / `full` figure is seeded from the page slug/title (not random, not constant); the `mark` logo is the same everywhere.
 - [ ] No self-describing caption or physics labels on a content page; `full` variant only where the topic warrants it.
 - [ ] Labels are real; copy is precise, not placeholder.
 - [ ] It does not resemble the generic cream-coral / dark-acid / rounded-SaaS look.

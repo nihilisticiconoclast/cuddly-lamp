@@ -88,17 +88,32 @@ hr,.rule{border:0;height:0;border-top:var(--rule);margin:2.5rem 0}
 .btn:focus-visible{outline:2px solid var(--incident);outline-offset:3px}
 
 /* ── the signature ────────────────────────────────────────────────────────
-   DEFAULT is the quiet mark: a small recurring doodle, NOT a hero image.
+   Two different jobs (see tunnel-figure.js): the FIXED house logo (.sig,
+   variant:'mark') and the per-page RANDOM doodle (.doodle, variant:'doodle').
    Fill any of these with TunnelFigure.tunnelFigureSVG(seed[, {variant}]). */
 
-/* .sig — the small marginal mark (default). Put it in a masthead corner or a
-   footer. Keep it small; it is a colophon, not a centrepiece. */
+/* .sig — the fixed house mark / logo (variant:'mark'). Same picture on every
+   page. Put it in a masthead corner or a footer; keep it small. */
 .sig{display:block;width:clamp(72px,8vw,116px);height:auto;line-height:0}
 .sig svg{width:100%;height:auto;display:block}
 
-/* .sig-bg — a faint full-bleed watermark (variant:'background'). A whisper of
-   texture behind content; never competes with text. */
-.sig-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.06}
+/* .doodle — the per-page RANDOM scribble (variant:'doodle'). Different on every
+   page, static once loaded. It is decorative connective tissue: drop it BETWEEN
+   sections and let it sit OFF-CENTRE — never boxed, never captioned, never its
+   own section. Pick a side with the modifiers; --bleed lets it spill into the
+   gutter so it reads as a margin doodle, not a figure. */
+.doodle{display:block;width:clamp(150px,24vw,300px);height:auto;line-height:0;opacity:.9;margin:clamp(28px,5vw,56px) 0}
+.doodle svg{width:100%;height:auto;display:block}
+.doodle--right{margin-left:auto}                                    /* hug the right gutter */
+.doodle--left{margin-right:auto}                                    /* hug the left gutter  */
+.doodle--bleed-right{margin-right:calc(-1 * clamp(8px,4vw,64px))}   /* spill off the right  */
+.doodle--bleed-left{margin-left:calc(-1 * clamp(8px,4vw,64px))}     /* spill off the left   */
+
+/* .sig-bg — a faint full-bleed watermark (variant:'background'). Faint, but it
+   must actually be visible on the paper: the figure is drawn at a reduced
+   opacity already, so this container only needs a gentle knock-down (the old
+   .06 multiplied that to near-zero). */
+.sig-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4}
 .sig-bg svg{width:100%;height:100%;display:block;object-fit:cover}
 
 /* .figure — the FULL explanatory figure (variant:'full'). Use only on pages

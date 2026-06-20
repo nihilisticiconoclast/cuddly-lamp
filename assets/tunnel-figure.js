@@ -1,28 +1,41 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   tunnel-figure.js — the seeded signature generator for the "Tunnel" house
-   aesthetic (cartography × phase-space).
+   tunnel-figure.js — the signature generator for the "Tunnel" house aesthetic
+   (cartography × phase-space). Returns a deterministic SVG *string*. No
+   dependencies; runs unchanged in the browser and in Node.
 
-   Returns a deterministic SVG *string* from a seed (typically a page slug).
-   No dependencies; runs unchanged in the browser and in Node.
+   There are two distinct jobs here, and they are NOT the same picture:
+
+     1. a fixed LOGO  — the recognisable house mark (one ridge, two wells, one
+        route tunnelling through). Identical on every page. Seed is ignored.
+     2. a per-page DOODLE — a genuinely different little scribble for each page,
+        deterministic once the page loads. This is the "random per page, but
+        static once set" connective quirk.
+
+   VARIANTS (opts.variant):
+     'mark'       (DEFAULT) the LOGO. Fixed composition, seed ignored — the same
+                  small house mark everywhere. Put it in a masthead/footer.
+     'doodle'     a per-page RANDOM composition (seeded): ridge + 2 wells that
+                  straddle it + 0–2 extra wells + the red route between them.
+                  Noticeably different per page, static once loaded. Decorative;
+                  no labels, no caption. Sits off-centre / between sections.
+     'background' a seeded, contours-only watermark for behind content. The
+                  composition varies per page (less loudly than 'doodle'); drawn
+                  faint-but-visible (pair with .sig-bg, which no longer crushes
+                  it to nothing).
+     'full'      the explanatory figure (seeded): doodle composition + the red
+                  route + WKB amplitude inset + grid reference + spot height +
+                  caption. Use ONLY when the page is actually about terrain /
+                  sampling / optimisation / tunnelling.
 
        same seed  -> identical figure   (static per page)
-       new  seed  -> different terrain  (of a theme, not a clone)
-
-   VARIANTS (opts.variant) — choose how loud the motif is:
-     'mark'       (DEFAULT) a small, SILENT doodle: seeded contours + the red
-                  route tunnelling through a ridge. No inset, no labels, no
-                  caption. This is the recurring quirk that ties pages together
-                  — place it small, in a masthead corner or footer. NOT a hero.
-     'background' an even fainter version (contours only) for a full-bleed
-                  watermark behind content.
-     'full'      the explanatory figure: adds the WKB amplitude inset, the grid
-                  reference, the spot height and the caption. Use ONLY when the
-                  page is actually about terrain / sampling / optimisation /
-                  tunnelling, so the graphic doesn't contradict the content.
+       new  seed  -> different terrain  ('doodle'/'background'/'full' only;
+                                         'mark' is fixed by design)
 
    Usage (browser):
-       el.innerHTML = TunnelFigure.tunnelFigureSVG("three-card-problem");           // mark
-       el.innerHTML = TunnelFigure.tunnelFigureSVG("mcmc", { variant: "full" });    // full
+       el.innerHTML = TunnelFigure.tunnelFigureSVG("any");                          // logo
+       el.innerHTML = TunnelFigure.tunnelFigureSVG("three-card-problem",
+                                                    { variant: "doodle" });         // per-page doodle
+       el.innerHTML = TunnelFigure.tunnelFigureSVG("mcmc", { variant: "full" });    // explanatory
    ───────────────────────────────────────────────────────────────────────── */
 (function (root, factory) {
   const api = factory();
@@ -61,30 +74,90 @@
     };
   }
 
+  // ── compositions ─────────────────────────────────────────────────────────
+  // A composition is { ridge, wells, link } in the unit square. The route runs
+  // between wells[link.a] and wells[link.b]. fieldAt() sums one ridge (positive)
+  // and the wells (negative) into the scalar terrain that gets contoured.
+
+  // The FIXED logo: one central ridge, two balanced wells, one route. This is
+  // the house mark — deliberately symmetric and always the same.
+  function fixedComposition() {
+    return {
+      ridge: { x: 0.50, width: 0.085, bend: 0.0, tilt: 0.0, h: 1.22 },
+      wells: [
+        { x: 0.24, y: 0.50, depth: 0.55, sigma: 0.105 },
+        { x: 0.76, y: 0.50, depth: 0.47, sigma: 0.105 },
+      ],
+      link: { a: 0, b: 1 },
+    };
+  }
+
+  // The per-page composition: everything moves. The ridge wanders and tilts;
+  // the two route-wells straddle it (so the route still tunnels THROUGH the
+  // ridge); 0–2 extra wells drop in anywhere for terrain variety. `spread`
+  // scales how far things roam — 'doodle'/'full' roam fully; 'background' a bit
+  // less so the watermark stays calm.
+  function seededComposition(rng, spread) {
+    const rand = (a, b) => a + (b - a) * rng();
+    const s = spread == null ? 1 : spread;
+    const mid = (a, b, k) => {                 // pull a range toward its centre by (1-k)
+      const c = (a + b) / 2, h = (b - a) / 2;
+      return [c - h * k, c + h * k];
+    };
+
+    const [rxA, rxB] = mid(0.30, 0.70, s);
+    const ridgeX = rand(rxA, rxB);
+    const ridge = {
+      x:     ridgeX,
+      width: rand(0.052, 0.115),
+      bend:  rand(-0.30, 0.30) * s,
+      tilt:  rand(-0.75, 0.75) * s,
+      h:     rand(0.95, 1.50),
+    };
+
+    // two wells that straddle the ridge — these are the route's endpoints
+    const wells = [
+      { x: rand(0.10, ridgeX - 0.12), y: rand(0.22, 0.78), depth: rand(0.45, 0.62), sigma: rand(0.085, 0.130) },
+      { x: rand(ridgeX + 0.12, 0.90), y: rand(0.22, 0.78), depth: rand(0.45, 0.62), sigma: rand(0.085, 0.130) },
+    ];
+
+    // 0–2 extra wells anywhere — pure terrain variety, not route endpoints
+    const extra = Math.floor(rand(0, 2.999) * s);
+    for (let i = 0; i < extra; i++) {
+      wells.push({ x: rand(0.12, 0.88), y: rand(0.16, 0.84), depth: rand(0.30, 0.55), sigma: rand(0.070, 0.120) });
+    }
+
+    return { ridge, wells, link: { a: 0, b: 1 } };
+  }
+
   function tunnelFigureSVG(seed, opts) {
     opts = opts || {};
     const W = opts.width  || 640;
     const H = opts.height || 640;
-    const variant = opts.variant || "mark";       // 'mark' | 'background' | 'full'
-    const opK = variant === "background" ? 0.5 : 1;
+    const variant = opts.variant || "mark";   // 'mark' | 'doodle' | 'background' | 'full'
+
     const rng = mulberry32(hashSeed(seed == null ? "tunnel" : seed));
     const rand = (a, b) => a + (b - a) * rng();
 
-    // ── seeded scalar field: a barrier ridge between two basins ─────────────
-    const ridgeX     = rand(0.42, 0.58);
-    const ridgeWidth = rand(0.065, 0.115);
-    const ridgeBend  = rand(-0.18, 0.18);
-    const ridgeTilt  = rand(-0.45, 0.45);
-    const ridgeH     = rand(1.00, 1.35);
-    const bx1 = rand(0.13, 0.30), by1 = rand(0.34, 0.66);
-    const bx2 = rand(0.70, 0.87), by2 = rand(0.34, 0.66);
+    // mark = fixed logo (seed ignored); everything else = seeded composition.
+    const comp = variant === "mark"
+      ? fixedComposition()
+      : seededComposition(rng, variant === "background" ? 0.78 : 1);
+    const { ridge, wells, link } = comp;
 
+    // background is the only contours-only variant; it is drawn faint-but-visible
+    // (the old 0.5 multiplier + a 0.06 container made it invisible — see tokens.css).
+    const opK = variant === "background" ? 0.72 : 1;
+    const drawRoute = variant !== "background";
+
+    // ── scalar field: ridge (high) minus the wells (low) ────────────────────
     function fieldAt(u, v) {
-      const cx = ridgeX + ridgeBend * Math.sin((v - 0.5) * Math.PI) + ridgeTilt * (v - 0.5);
+      const cx = ridge.x + ridge.bend * Math.sin((v - 0.5) * Math.PI) + ridge.tilt * (v - 0.5);
       const d  = u - cx;
-      let f = ridgeH * Math.exp(-(d * d) / (2 * ridgeWidth * ridgeWidth));
-      f -= 0.55 * Math.exp(-(((u - bx1) ** 2 + (v - by1) ** 2) / (2 * 0.10 * 0.10)));
-      f -= 0.45 * Math.exp(-(((u - bx2) ** 2 + (v - by2) ** 2) / (2 * 0.10 * 0.10)));
+      let f = ridge.h * Math.exp(-(d * d) / (2 * ridge.width * ridge.width));
+      for (const w of wells) {
+        f -= w.depth * Math.exp(-(((u - w.x) ** 2 + (v - w.y) ** 2) / (2 * w.sigma * w.sigma)));
+      }
       f += 0.12 * (v - 0.5);
       return f;
     }
@@ -157,21 +230,22 @@
                  + '" stroke-width="' + w + '" opacity="' + (op * opK).toFixed(2) + '"/>';
     }
 
-    // ── the route: basin 1 → through the ridge crest → basin 2 ──────────────
-    // (drawn for 'mark' and 'full'; omitted for the quiet 'background' wash)
+    // ── the route: well A → through the ridge crest → well B ─────────────────
+    // (drawn for mark / doodle / full; omitted for the quiet background wash)
     let defs = "", routeSVG = "", insetSVG = "", labelSVG = "";
 
-    if (variant !== "background") {
+    if (drawRoute) {
       defs = '<defs><marker id="tnl-ar" markerWidth="9" markerHeight="9" refX="6" refY="4.5" '
            + 'orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="' + PAL.route + '"/></marker></defs>';
 
+      const A = wells[link.a], B = wells[link.b];
       const crestLevel = fmin + 0.72 * (fmax - fmin);
       const steps = 60;
       const route = [];
       for (let s = 0; s <= steps; s++) {
         const tt = s / steps;
-        const u = bx1 + (bx2 - bx1) * tt;
-        const v = by1 + (by2 - by1) * tt + 0.04 * Math.sin(tt * Math.PI);
+        const u = A.x + (B.x - A.x) * tt;
+        const v = A.y + (B.y - A.y) * tt + 0.04 * Math.sin(tt * Math.PI);
         route.push([u, v, fieldAt(u, v)]);
       }
       let entry = -1, exit = -1;
@@ -229,7 +303,7 @@
           + '<path d="' + wkb + '" fill="none" stroke="' + PAL.incident + '" stroke-width="2"/>'
           + '<text x="' + (insetX + bX0).toFixed(1) + '" y="' + (insetY - amp0 - 12).toFixed(1)
               + '" fill="' + PAL.amber + '" font-family="IBM Plex Mono, monospace" font-size="12">'
-              + '\u03C8 \u221D e^(\u2212\u03BAx)</text>';
+              + 'ψ ∝ e^(−κx)</text>';
 
         const gref = "SO " + Math.floor(rand(80, 90)) + " "
                    + String(Math.floor(rand(0, 10))) + String(Math.floor(rand(0, 10)));
@@ -238,9 +312,9 @@
             '<text x="' + pad + '" y="26" fill="' + PAL.contour + '" opacity="0.75" '
               + 'font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1">' + gref + '</text>'
           + '<text x="' + (W - pad) + '" y="26" text-anchor="end" fill="' + PAL.contour + '" opacity="0.75" '
-              + 'font-family="IBM Plex Mono, monospace" font-size="12">\u25B2 ' + spot + 'm</text>'
+              + 'font-family="IBM Plex Mono, monospace" font-size="12">▲ ' + spot + 'm</text>'
           + '<text x="' + pad + '" y="' + (H - 14) + '" fill="' + PAL.contour + '" opacity="0.7" '
-              + 'font-family="IBM Plex Mono, monospace" font-size="12">barrier crossing \u2014 the amplitude survives the wall</text>';
+              + 'font-family="IBM Plex Mono, monospace" font-size="12">barrier crossing — the amplitude survives the wall</text>';
       }
     }
 

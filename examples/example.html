@@ -25,7 +25,7 @@
 
     <div class="masthead">
       <div class="brand">
-        <!-- the signature: a SMALL masthead mark, the recurring doodle -->
+        <!-- the FIXED house mark / logo (same on every page) -->
         <span class="sig" id="sig"></span>
         <span class="wordmark">Notes<br>Probability</span>
       </div>
@@ -38,6 +38,10 @@
     one side and white on the other, one white on both. You draw one at random,
     drop it on the table, and the face you can see is black. The intuition says
     one-half. The intuition is wrong.</p>
+
+    <!-- the per-page doodle: random per page, static once loaded. It sits
+         BETWEEN sections and off to one side — not boxed, not captioned. -->
+    <div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
 
     <hr>
 
@@ -66,9 +70,12 @@
 
   <script src="../assets/tunnel-figure.js"></script>
   <script>
-    // small, silent mark, seeded from the page (default 'mark' variant)
+    // the masthead logo: fixed 'mark' — same house mark on every page (seed ignored)
+    document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(null, { variant: 'mark' });
+
+    // the per-page doodle: seeded from the page, so it's unique here but stable on reload
     var seed = document.body.dataset.seed || location.pathname || document.title;
-    document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(seed);
+    document.getElementById('doodle').innerHTML = TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
   </script>
 </body>
 </html>

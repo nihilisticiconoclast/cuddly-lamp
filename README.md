@@ -5,29 +5,30 @@ Claude skill (`tunnel-aesthetic`).
 
 It's a *cartography × phase-space* identity: a locked palette (chart-paper,
 contour brown, teal, amber, route red), Fraunces / Public Sans / IBM Plex Mono
-type, hard edges, and a **seeded signature mark** — a small contour-map doodle
-with a route tunnelling through a barrier ridge. The same seed always produces
-the same mark, so every page is unmistakably part of the family while no two
-pages carry the same picture.
+type, hard edges, and a contour-map signature — a route tunnelling through a
+barrier ridge. The signature comes in two jobs: a **fixed house logo** that's
+the same on every page, and a **per-page doodle** that's different on every page
+but stable once the page loads. Together they make every page unmistakably part
+of the family while no two pages carry the same picture.
 
 The concept underneath: a contour line is a level set, and an energy landscape
 is terrain — an Ordnance-Survey map and a probability surface are the same
 mathematics. The motif (a route going *through* the ridge, not over it) reads
 the OS tunnel symbol and quantum tunnelling as one picture.
 
-## The signature is a *mark*, not a hero
+## A logo *and* a doodle — never a hero
 
 The most common way to get this wrong is to blow the figure up into a big,
 boxed centrepiece with a self-describing caption ("Terrain seeded from this
-page…", grid references, `ψ ∝ e^(−κx)`). **Don't.** By default the signature is
-a small recurring colophon — a doodle in a masthead corner or footer — that
-ties the family together by *recurrence*, not size. It carries three variants:
+page…", grid references, `ψ ∝ e^(−κx)`). **Don't.** The signature is connective
+tissue, not a centrepiece. Four variants:
 
-| variant          | draws                                   | use for                                                    |
-|------------------|-----------------------------------------|------------------------------------------------------------|
-| `mark` (default) | seeded contours + the red route; silent | every page — the small corner / footer doodle              |
-| `background`     | faint contours only                     | a whole-page watermark behind content                      |
-| `full`           | mark + WKB inset + labels + caption      | only pages genuinely about terrain / sampling / tunnelling |
+| variant          | seeded?             | draws                                    | use for                                                    |
+|------------------|---------------------|------------------------------------------|------------------------------------------------------------|
+| `mark` (default) | **no** — fixed logo | the house mark: ridge + 2 wells + route  | the masthead / footer brand, identical on every page       |
+| `doodle`         | yes, per page       | a varied composition + the red route     | the off-centre, between-sections scribble — unique per page |
+| `background`     | yes, per page       | varied contours only (faint but visible) | a whole-page watermark behind content                      |
+| `full`           | yes, per page       | composition + route + WKB inset + labels | only pages genuinely about terrain / sampling / tunnelling |
 
 The loud `full` figure (caption and physics labels) is reserved for pages whose
 *subject* is the landscape, or the graphic contradicts the content.
@@ -46,41 +47,50 @@ tunnel-aesthetic/
 
 | File | What it is |
 |------|------------|
-| [`SKILL.md`](SKILL.md) | The brief. The locked layer (never change), the signature mark (small, seeded, three variants), the files, how to apply it, and a pre-ship checklist. |
-| [`assets/tokens.css`](assets/tokens.css) | The non-negotiable identity — CSS variables for the palette and type, plus the recurring component/scaffold classes (incl. `.sig`, `.sig-bg`, `.figure`). Link this on every page. |
-| [`assets/tunnel-figure.js`](assets/tunnel-figure.js) | Generates the signature SVG from a seed using marching-squares contouring of a seeded scalar field, the tunnel route, and (in the `full` variant) a WKB amplitude inset. Runs in the browser (`window.TunnelFigure`) and Node (`require`). |
-| [`examples/example.html`](examples/example.html) | A complete reference page wiring `tokens.css` and `tunnel-figure.js` together, with the signature as a small masthead mark. |
+| [`SKILL.md`](SKILL.md) | The brief. The locked layer (never change), the signature (fixed logo + per-page doodle, four variants), the files, how to apply it, and a pre-ship checklist. |
+| [`assets/tokens.css`](assets/tokens.css) | The non-negotiable identity — CSS variables for the palette and type, plus the recurring component/scaffold classes (incl. `.sig`, `.doodle`, `.sig-bg`, `.figure`). Link this on every page. |
+| [`assets/tunnel-figure.js`](assets/tunnel-figure.js) | Generates the signature SVG using marching-squares contouring of a scalar field, the tunnel route, and (in the `full` variant) a WKB amplitude inset. `mark` is a fixed logo; `doodle` / `background` / `full` are seeded per page. Runs in the browser (`window.TunnelFigure`) and Node (`require`). |
+| [`examples/example.html`](examples/example.html) | A complete reference page wiring `tokens.css` and `tunnel-figure.js` together — the fixed logo in the masthead and a per-page doodle between sections. |
 
 ## Quick start
 
-Link the locked layer and mount the small seeded mark:
+Link the locked layer, mount the fixed logo, and drop a per-page doodle:
 
 ```html
 <link rel="stylesheet" href="assets/tokens.css">
 
-<!-- the default: a small mark in a masthead corner or footer -->
+<!-- the fixed house logo (seed ignored — same on every page) -->
 <span class="sig" id="sig"></span>
+
+<!-- the per-page doodle: off-centre, between sections -->
+<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+
 <script src="assets/tunnel-figure.js"></script>
 <script>
+  document.getElementById('sig').innerHTML =
+    TunnelFigure.tunnelFigureSVG(null, { variant: 'mark' });
   // seed = something stable and unique to THIS page (slug / path / title)
   const seed = document.body.dataset.seed || location.pathname || document.title;
-  document.getElementById('sig').innerHTML = TunnelFigure.tunnelFigureSVG(seed);
+  document.getElementById('doodle').innerHTML =
+    TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
 </script>
 ```
 
-For a faint full-page watermark instead, fill `<div class="sig-bg">` with
-`tunnelFigureSVG(seed, { variant: 'background' })`. Pick **one** signature per
-page — a corner mark *or* a watermark, not both. Use the `full` variant only on
-pages that are actually about terrain / sampling / tunnelling.
+For a faint full-page watermark instead of the doodle, fill `<div class="sig-bg">`
+with `tunnelFigureSVG(seed, { variant: 'background' })`. Pick at most one per-page
+figure — a doodle *or* a watermark (the fixed logo can sit alongside either). Use
+the `full` variant only on pages that are actually about terrain / sampling /
+tunnelling.
 
 In Node:
 
 ```js
 const { tunnelFigureSVG } = require("./assets/tunnel-figure.js");
-const svg = tunnelFigureSVG("my-page-slug"); // deterministic SVG string (mark)
+const logo   = tunnelFigureSVG(null, { variant: "mark" });               // fixed logo
+const doodle = tunnelFigureSVG("my-page-slug", { variant: "doodle" });   // per-page, deterministic
 ```
 
 See [`SKILL.md`](SKILL.md) for the full rules (one red `--route` element per
-view, amber only in the figure, square corners, real labels, the small-mark
-signature) and [`examples/example.html`](examples/example.html) for a worked
-page.
+view, amber only in the figure, square corners, real labels, the fixed logo +
+per-page doodle signature) and [`examples/example.html`](examples/example.html)
+for a worked page.
