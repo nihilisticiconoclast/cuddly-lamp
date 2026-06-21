@@ -26,7 +26,7 @@ tissue, not a centrepiece. Four variants:
 | variant          | seeded?             | draws                                    | use for                                                    |
 |------------------|---------------------|------------------------------------------|------------------------------------------------------------|
 | `mark` (default) | **no** — fixed logo | the house mark: ridge + 2 wells + route  | the masthead / footer brand, identical on every page       |
-| `doodle`         | yes, per page       | a varied composition + the red route     | the off-centre, between-sections scribble — unique per page |
+| `doodle`         | yes, per page       | a varied composition + the red route     | the off-centre margin scribble (via `placeDoodle`) — unique per page |
 | `background`     | yes, per page       | varied contours only (faint but visible) | a whole-page watermark behind content                      |
 | `full`           | yes, per page       | composition + route + WKB inset + labels | only pages genuinely about terrain / sampling / tunnelling |
 
@@ -50,7 +50,7 @@ tunnel-aesthetic/
 | [`SKILL.md`](SKILL.md) | The brief. The locked layer (never change), the signature (fixed logo + per-page doodle, four variants), the files, how to apply it, and a pre-ship checklist. |
 | [`assets/tokens.css`](assets/tokens.css) | The non-negotiable identity — CSS variables for the palette and type, plus the recurring component/scaffold classes (incl. `.sig`, `.doodle`, `.sig-bg`, `.figure`). Link this on every page. |
 | [`assets/tunnel-figure.js`](assets/tunnel-figure.js) | Generates the signature SVG using marching-squares contouring of a scalar field, the tunnel route, and (in the `full` variant) a WKB amplitude inset. `mark` is a fixed logo; `doodle` / `background` / `full` are seeded per page. Runs in the browser (`window.TunnelFigure`) and Node (`require`). |
-| [`examples/example.html`](examples/example.html) | A complete reference page wiring `tokens.css` and `tunnel-figure.js` together — the fixed logo in the masthead and a per-page doodle between sections. |
+| [`examples/example.html`](examples/example.html) | A complete reference page wiring `tokens.css` and `tunnel-figure.js` together — the fixed logo in the masthead and a per-page doodle placed in the margins. |
 
 ## Quick start
 
@@ -62,7 +62,7 @@ Link the locked layer, mount the fixed logo, and drop a per-page doodle:
 <!-- the fixed house logo (seed ignored — same on every page) -->
 <span class="sig" id="sig"></span>
 
-<!-- the per-page doodle: off-centre, between sections -->
+<!-- the per-page doodle: out of flow, placed in a random margin slot (placeDoodle) -->
 <div class="doodle" id="doodle"></div>
 
 <script src="assets/tunnel-figure.js"></script>

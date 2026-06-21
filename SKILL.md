@@ -73,16 +73,16 @@ There are **two different jobs**, and they are not the same picture:
 - the **doodle** (`doodle`) — a genuinely **different little scribble per page**:
   the ridge wanders and tilts, there are two to four wells, the route runs at a
   different angle. Deterministic once the page loads (same slug → same doodle),
-  but noticeably unlike the next page's. It's the connective *quirk*, dropped
-  **between sections and off to one side** — never boxed, never captioned, never
-  its own section.
+  but noticeably unlike the next page's. It's the connective *quirk*, kept
+  **out of flow in the page margins, off to one side** — never boxed, never
+  captioned, never its own section, and never behind the reading text.
 
 **Hard rules (an earlier version got these wrong — do not repeat):**
 - Small and marginal: a masthead corner / footer (logo), an off-centre scribble
-  between sections (doodle), or a faint full-bleed watermark (background).
+  in the page margins (doodle), or a faint full-bleed watermark (background).
   **Never** a full-width, full-screen, or "boxed image" treatment, and never a
   dedicated section.
-- **The doodle's position varies, never fixed.** Mount it with `TunnelFigure.placeDoodle(el)`, which drops it into one of six edge slots ({left,right} × {top,middle,bottom}) that bleed into the gutter, behind the content — so it shows only in the margin, never behind the text. A hard-coded corner reads as static across the family; do not do it.
+- **The doodle never sits behind the text — and its position varies, never fixed.** This is the priority rule: the doodle lives only in the empty margins. Mount it with `TunnelFigure.placeDoodle(el)`, which drops it into one of six edge slots ({left,right} × {top,middle,bottom}) that bleed into the gutter, so it shows only in the margin and never lands behind or over the reading column. (It also sits at `z-index:-1`, behind content in stacking order — but it is the *placement in the margins*, not the stacking, that keeps it off the text, so the rule holds even on pages with no opaque panels covering it.) A hard-coded corner reads as static across the family; do not do it.
 - **No caption on a content page.** Never print "Terrain seeded from this page",
   "barrier crossing", grid references, or `ψ ∝ e^(−κx)` on a normal page — those
   belong only to the `full` variant on pages that are *about* that.
@@ -95,7 +95,7 @@ There are **two different jobs**, and they are not the same picture:
 | variant          | seeded?            | draws                                       | use for                                                    |
 |------------------|--------------------|---------------------------------------------|------------------------------------------------------------|
 | `mark` (default) | **no** — fixed logo| the house mark: ridge + 2 wells + route     | the masthead / footer brand, the same on every page        |
-| `doodle`         | yes, per page      | a varied composition + the red route        | the off-centre, between-sections scribble — unique per page |
+| `doodle`         | yes, per page      | a varied composition + the red route        | the off-centre margin scribble (via `placeDoodle`) — unique per page |
 | `background`     | yes, per page      | varied contours only (faint but visible)    | a whole-page watermark behind content                      |
 | `full`           | yes, per page      | composition + route + WKB inset + labels    | only pages genuinely about terrain / sampling / tunnelling |
 
@@ -103,7 +103,7 @@ There are **two different jobs**, and they are not the same picture:
 <!-- the fixed house logo in the masthead (seed ignored) -->
 <span class="sig" id="sig"></span>
 
-<!-- the per-page doodle: off-centre, between sections -->
+<!-- the per-page doodle: out of flow, placed in a random margin slot (placeDoodle) -->
 <div class="doodle" id="doodle"></div>
 
 <script src="assets/tunnel-figure.js"></script>
@@ -187,7 +187,7 @@ function Signature({ seed }) {
 - [ ] Fonts are Fraunces / Public Sans / IBM Plex Mono only.
 - [ ] Exactly one `--route` red element; amber appears only in the figure.
 - [ ] Corners are square (`--radius: 0`).
-- [ ] The fixed `mark` logo sits in a corner/footer; any per-page `doodle` is small, off-centre, between sections — not a hero, not full-width, not its own section. Its position comes from `placeDoodle` (a random edge slot), never a fixed corner.
+- [ ] The fixed `mark` logo sits in a corner/footer; any per-page `doodle` is small, off-centre, in the page margins — not a hero, not full-width, not its own section, and never behind the reading text. Its position comes from `placeDoodle` (a random edge slot), never a fixed corner.
 - [ ] The `doodle` / `background` / `full` figure is seeded from the page slug/title (not random, not constant); the `mark` logo is the same everywhere.
 - [ ] No self-describing caption or physics labels on a content page; `full` variant only where the topic warrants it.
 - [ ] Labels are real; copy is precise, not placeholder.
