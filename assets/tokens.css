@@ -41,8 +41,9 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}   /* clip the doodle's gutter-bleed */
 body{
+  position:relative;          /* offset parent for the per-page .doodle (placeDoodle) */
   margin:0;
   background:var(--paper);
   color:var(--ink);
@@ -97,17 +98,14 @@ hr,.rule{border:0;height:0;border-top:var(--rule);margin:2.5rem 0}
 .sig{display:block;width:clamp(72px,8vw,116px);height:auto;line-height:0}
 .sig svg{width:100%;height:auto;display:block}
 
-/* .doodle — the per-page RANDOM scribble (variant:'doodle'). Different on every
-   page, static once loaded. It is decorative connective tissue: drop it BETWEEN
-   sections and let it sit OFF-CENTRE — never boxed, never captioned, never its
-   own section. Pick a side with the modifiers; --bleed lets it spill into the
-   gutter so it reads as a margin doodle, not a figure. */
-.doodle{display:block;width:clamp(150px,24vw,300px);height:auto;line-height:0;opacity:.9;margin:clamp(28px,5vw,56px) 0}
+/* .doodle — the per-page RANDOM scribble (variant:'doodle'). It is an out-of-flow
+   MARGIN decoration, positioned by TunnelFigure.placeDoodle() into one of six edge
+   slots ({left,right} × {top,middle,bottom}), bleeding into the gutter and sitting
+   BEHIND the content (opaque panels cover it; it shows only in the empty margins).
+   Its position MUST vary per page — call placeDoodle, never pin it to one fixed
+   spot. Offset parent is body{position:relative} (set above). */
+.doodle{position:absolute;z-index:-1;pointer-events:none;width:clamp(150px,22vw,280px);height:auto;line-height:0;opacity:.6;margin:0}
 .doodle svg{width:100%;height:auto;display:block}
-.doodle--right{margin-left:auto}                                    /* hug the right gutter */
-.doodle--left{margin-right:auto}                                    /* hug the left gutter  */
-.doodle--bleed-right{margin-right:calc(-1 * clamp(8px,4vw,64px))}   /* spill off the right  */
-.doodle--bleed-left{margin-left:calc(-1 * clamp(8px,4vw,64px))}     /* spill off the left   */
 
 /* .sig-bg — a faint full-bleed watermark (variant:'background'). Faint, but it
    must actually be visible on the paper: the figure is drawn at a reduced

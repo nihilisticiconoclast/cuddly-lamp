@@ -82,6 +82,7 @@ There are **two different jobs**, and they are not the same picture:
   between sections (doodle), or a faint full-bleed watermark (background).
   **Never** a full-width, full-screen, or "boxed image" treatment, and never a
   dedicated section.
+- **The doodle's position varies, never fixed.** Mount it with `TunnelFigure.placeDoodle(el)`, which drops it into one of six edge slots ({left,right} × {top,middle,bottom}) that bleed into the gutter, behind the content — so it shows only in the margin, never behind the text. A hard-coded corner reads as static across the family; do not do it.
 - **No caption on a content page.** Never print "Terrain seeded from this page",
   "barrier crossing", grid references, or `ψ ∝ e^(−κx)` on a normal page — those
   belong only to the `full` variant on pages that are *about* that.
@@ -103,7 +104,7 @@ There are **two different jobs**, and they are not the same picture:
 <span class="sig" id="sig"></span>
 
 <!-- the per-page doodle: off-centre, between sections -->
-<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+<div class="doodle" id="doodle"></div>
 
 <script src="assets/tunnel-figure.js"></script>
 <script>
@@ -113,6 +114,7 @@ There are **two different jobs**, and they are not the same picture:
   const seed = document.body.dataset.seed || location.pathname || document.title;
   document.getElementById('doodle').innerHTML =
     TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
+  TunnelFigure.placeDoodle(document.getElementById('doodle'));   // random edge slot — never a fixed spot
 </script>
 ```
 
@@ -185,7 +187,7 @@ function Signature({ seed }) {
 - [ ] Fonts are Fraunces / Public Sans / IBM Plex Mono only.
 - [ ] Exactly one `--route` red element; amber appears only in the figure.
 - [ ] Corners are square (`--radius: 0`).
-- [ ] The fixed `mark` logo sits in a corner/footer; any per-page `doodle` is small, off-centre, between sections — not a hero, not full-width, not its own section.
+- [ ] The fixed `mark` logo sits in a corner/footer; any per-page `doodle` is small, off-centre, between sections — not a hero, not full-width, not its own section. Its position comes from `placeDoodle` (a random edge slot), never a fixed corner.
 - [ ] The `doodle` / `background` / `full` figure is seeded from the page slug/title (not random, not constant); the `mark` logo is the same everywhere.
 - [ ] No self-describing caption or physics labels on a content page; `full` variant only where the topic warrants it.
 - [ ] Labels are real; copy is precise, not placeholder.
@@ -211,7 +213,7 @@ The assets are served straight from this public repo via jsDelivr, tracking
 
 <!-- the fixed house logo + a per-page doodle -->
 <span class="sig" id="sig"></span>
-<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+<div class="doodle" id="doodle"></div>
 
 <!-- before </body> -->
 <script src="https://cdn.jsdelivr.net/gh/nihilisticiconoclast/cuddly-lamp@main/assets/tunnel-figure.js"></script>
@@ -221,6 +223,7 @@ The assets are served straight from this public repo via jsDelivr, tracking
   var seed = document.body.dataset.seed || location.pathname || document.title;
   document.getElementById('doodle').innerHTML =
     TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
+  TunnelFigure.placeDoodle(document.getElementById('doodle'));   // random edge slot — never a fixed spot
 </script>
 ```
 

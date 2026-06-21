@@ -327,5 +327,37 @@
     return open + defs + contourSVG + routeSVG + insetSVG + labelSVG + "</svg>";
   }
 
-  return { tunnelFigureSVG, palette: PAL, _hashSeed: hashSeed };
+  // ── doodle placement ──────────────────────────────────────────────────────
+  // The per-page doodle must NOT live at a fixed spot — a fixed position reads as
+  // static across the family and can sit behind the text. placeDoodle drops the
+  // element into one of six EDGE slots — {left,right} × {top,middle,bottom} —
+  // bleeding into the page gutter, so the visible part stays in the margin and
+  // never lands behind the reading column. Pairs with the `.doodle` rule in
+  // tokens.css (position:absolute; z-index:-1; behind content) and
+  // body{position:relative} as the offset parent.
+  //
+  //   TunnelFigure.placeDoodle(el);                 // fresh random slot each load
+  //   TunnelFigure.placeDoodle(el, { seed: slug }); // stable-but-varied per page
+  //
+  // Returns the chosen { side, vert }.
+  function placeDoodle(el, opts) {
+    if (!el) return null;
+    opts = opts || {};
+    const rng = opts.seed == null ? Math.random : mulberry32(hashSeed(opts.seed));
+    const side = rng() < 0.5 ? "left" : "right";
+    const vert = ["top", "middle", "bottom"][Math.floor(rng() * 3)];
+
+    el.style.position = "absolute";   // so it works even before tokens.css lands
+    el.style.top = el.style.bottom = el.style.left = el.style.right = "auto";
+    let tx, ty = "";
+    if (side === "left") { el.style.left  = "0"; tx = "translateX(-42%)"; }
+    else                 { el.style.right = "0"; tx = "translateX(42%)";  }
+    if (vert === "top")         el.style.top = "clamp(80px,12vh,140px)";
+    else if (vert === "middle") { el.style.top = "50%"; ty = " translateY(-50%)"; }
+    else                        el.style.bottom = "clamp(40px,8vh,100px)";
+    el.style.transform = tx + ty;
+    return { side, vert };
+  }
+
+  return { tunnelFigureSVG, placeDoodle, palette: PAL, _hashSeed: hashSeed };
 });

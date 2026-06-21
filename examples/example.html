@@ -41,7 +41,7 @@
 
     <!-- the per-page doodle: random per page, static once loaded. It sits
          BETWEEN sections and off to one side — not boxed, not captioned. -->
-    <div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+    <div class="doodle" id="doodle"></div>
 
     <hr>
 
@@ -76,6 +76,7 @@
     // the per-page doodle: seeded from the page, so it's unique here but stable on reload
     var seed = document.body.dataset.seed || location.pathname || document.title;
     document.getElementById('doodle').innerHTML = TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
+    TunnelFigure.placeDoodle(document.getElementById('doodle'));   // random edge slot — never a fixed spot
   </script>
 </body>
 </html>

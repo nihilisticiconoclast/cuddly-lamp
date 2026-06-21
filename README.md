@@ -63,7 +63,7 @@ Link the locked layer, mount the fixed logo, and drop a per-page doodle:
 <span class="sig" id="sig"></span>
 
 <!-- the per-page doodle: off-centre, between sections -->
-<div class="doodle doodle--right doodle--bleed-right" id="doodle"></div>
+<div class="doodle" id="doodle"></div>
 
 <script src="assets/tunnel-figure.js"></script>
 <script>
@@ -73,6 +73,7 @@ Link the locked layer, mount the fixed logo, and drop a per-page doodle:
   const seed = document.body.dataset.seed || location.pathname || document.title;
   document.getElementById('doodle').innerHTML =
     TunnelFigure.tunnelFigureSVG(seed, { variant: 'doodle' });
+  TunnelFigure.placeDoodle(document.getElementById('doodle'));   // random edge slot — never a fixed spot
 </script>
 ```
 
