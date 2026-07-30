@@ -52,6 +52,34 @@ tunnel-aesthetic/
 | [`assets/tunnel-figure.js`](assets/tunnel-figure.js) | Generates the signature SVG using marching-squares contouring of a scalar field, the tunnel route, and (in the `full` variant) a WKB amplitude inset. `mark` is a fixed logo; `doodle` / `background` / `full` are seeded per page. Runs in the browser (`window.TunnelFigure`) and Node (`require`). |
 | [`examples/example.html`](examples/example.html) | A complete reference page wiring `tokens.css` and `tunnel-figure.js` together — the fixed logo in the masthead and a per-page doodle between sections. |
 
+## The other skills here
+
+`tunnel-aesthetic` is about how things look. These two are about whether they work, and they
+live here for the same reason it does: a Claude Code session has no memory, so anything worth
+not relearning has to be written down somewhere a session will actually read it.
+
+Neither mentions this design system, or walks, or any particular project. Both were paid for
+during one build and are kept deliberately general.
+
+| Skill | What it is |
+|-------|------------|
+| [`verify-what-ships`](.claude/skills/verify-what-ships/SKILL.md) | What to check before claiming a deployed page works. A green deploy is not a live site; nothing at module scope may touch a CDN-loaded library; test with every external origin blocked; cache-bust local assets. Written after a Pages site served its README for a week under a green tick, and after one `L.layerGroup()` at module scope killed a whole page. |
+| [`changing-course`](.claude/skills/changing-course/SKILL.md) | How to notice an approach is failing and switch, rather than tuning a broken one for hours. Budget the approach, not just the task. Adding parameters is a rewrite signal. The user raising the same thing twice outranks your sense of progress. Written after six slow CI rounds on a heuristic that a simpler algorithm then replaced in twenty minutes. |
+
+Install either one for every repo on your machine:
+
+```bash
+for s in verify-what-ships changing-course; do
+  mkdir -p ~/.claude/skills/$s
+  curl -fsSL https://raw.githubusercontent.com/nihilisticiconoclast/cuddly-lamp/main/.claude/skills/$s/SKILL.md \
+    -o ~/.claude/skills/$s/SKILL.md
+done
+```
+
+For **Claude Code on the web**, `~/.claude` is invisible — a cloud session only sees what is
+committed. Copy the directory into the target repository's `.claude/skills/` instead, exactly
+as `dist/skill/` is copied for the aesthetic.
+
 ## Quick start
 
 Link the locked layer, mount the fixed logo, and drop a per-page doodle:
