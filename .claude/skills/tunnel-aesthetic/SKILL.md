@@ -91,6 +91,17 @@ Pick at most one per-page figure (doodle *or* watermark); the fixed logo can sit
 alongside either. Seed `doodle`/`background`/`full` from the page slug/path/title
 — never `Math.random()`, never a constant.
 
+## Explain the thing — on the page, by default
+
+Every deliverable carries its own explanation, in prose, on the page. Not a
+tooltip, not a README. Default behaviour, not something to wait to be asked for:
+what this is, the idea underneath it derived rather than asserted, what every
+displayed number means, what every control does (and which ones only change the
+pace), and what is exact versus idealised with the limits named. Paragraphs in
+the house voice; a list only where the content really is a list. A full-height
+app puts it below and lets the page scroll. Full detail in section 7 of the
+canonical brief.
+
 ## Self-check before shipping
 
 - Background `--paper`, text `--ink`; no white cards, no shadows.
@@ -102,3 +113,5 @@ alongside either. Seed `doodle`/`background`/`full` from the page slug/path/titl
 - Assets are **linked from the CDN, not inlined**.
 - No self-describing caption / physics labels on a content page (`full` only
   where the topic warrants it); labels real, copy precise.
+- The page explains itself: what it is, what each number means, what each control
+  does, what is idealised.

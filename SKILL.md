@@ -166,6 +166,8 @@ tunnel-aesthetic/
    section break.
 4. Keep to one red element, amber only in the figure, and prose copy with no
    bullet-spam unless the content is genuinely a list.
+5. Write the page's explanation of itself (section 7). This is part of the
+   default deliverable, not an extra.
 
 **React note:** import the palette and call the generator in an effect or at
 render:
@@ -193,6 +195,8 @@ function Signature({ seed }) {
 - [ ] Labels are real; copy is precise, not placeholder.
 - [ ] It does not resemble the generic cream-coral / dark-acid / rounded-SaaS look.
 - [ ] The assets are **linked from the CDN, not inlined** (section 6).
+- [ ] The page explains itself in prose: what it is, what each number means, what
+      each control does, and what is idealised (section 7).
 
 ---
 
@@ -258,3 +262,34 @@ skill automatically — and because this brief tells it to *link the CDN*, new
 pages come out referencing the shared assets instead of inlining them. Re-run the
 `curl` to pull the latest brief. (The skill is just this `SKILL.md`; the actual
 CSS/JS live on the CDN, so nothing else needs copying.)
+
+---
+
+## 7. Explain the thing — on the page, by default
+
+Every deliverable carries its own explanation, in prose, on the page itself. Not
+a tooltip, not a caption, not a README the reader will never open. This is a
+default, not a request to be waited for: if a page shows a number, a control or
+a picture, the page says what it is.
+
+The shape it usually takes:
+
+- **What this is**, in two or three sentences, before anything else.
+- **The idea underneath it**, derived rather than asserted. If there is a result
+  being demonstrated, show why it is true, not just that it is.
+- **What every displayed number means**, including its units and how it is
+  computed from the others.
+- **What every control does** — and, where it matters, which controls actually
+  change the outcome and which only change the pace.
+- **What is exact and what is idealised**, with the limitations stated plainly
+  rather than left for the reader to discover. A known 10% discrepancy that is
+  named and explained is a feature; the same discrepancy unmentioned is a bug.
+
+Write it as paragraphs in the house voice: precise, ideas-first, no filler. Use a
+list only where the content is genuinely a list — a legend, a set of controls, a
+set of metrics. A dense instrument panel still gets prose underneath it; the
+panel is not the explanation.
+
+If the page is a single full-height app, the explanation goes below it and the
+page scrolls. That is fine. What is not fine is shipping the instrument with no
+account of what it is measuring.
