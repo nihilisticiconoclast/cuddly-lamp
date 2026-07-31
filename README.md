@@ -63,7 +63,7 @@ during one build and are kept deliberately general.
 
 | Skill | What it is |
 |-------|------------|
-| [`verify-what-ships`](.claude/skills/verify-what-ships/SKILL.md) | What to check before claiming a deployed page works. A green deploy is not a live site; nothing at module scope may touch a CDN-loaded library; test with every external origin blocked; cache-bust local assets. Written after a Pages site served its README for a week under a green tick, and after one `L.layerGroup()` at module scope killed a whole page. |
+| [`verify-what-ships`](.claude/skills/verify-what-ships/SKILL.md) | What to check before claiming a deployed page works. A green deploy is not a live site; a generated config that fails to parse fails silently; nothing at module scope may touch a CDN-loaded library; test with every external origin blocked; cache-bust local assets. Written after a Pages site served its README for a week under a green tick, after one `L.layerGroup()` at module scope killed a whole page, and after a build redirected its own log annotations into the `config.js` it was generating — which made a correctly configured API key look, for a week, like a key the deploy had ignored. |
 | [`changing-course`](.claude/skills/changing-course/SKILL.md) | How to notice an approach is failing and switch, rather than tuning a broken one for hours. Budget the approach, not just the task. Adding parameters is a rewrite signal. The user raising the same thing twice outranks your sense of progress. Written after six slow CI rounds on a heuristic that a simpler algorithm then replaced in twenty minutes. |
 
 Install either one for every repo on your machine:
