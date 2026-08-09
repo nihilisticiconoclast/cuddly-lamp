@@ -54,22 +54,25 @@ tunnel-aesthetic/
 
 ## The other skills here
 
-`tunnel-aesthetic` is about how things look. These two are about whether they work, and they
+`tunnel-aesthetic` is about how things look. These four are about whether they work, and they
 live here for the same reason it does: a Claude Code session has no memory, so anything worth
 not relearning has to be written down somewhere a session will actually read it.
 
-Neither mentions this design system, or walks, or any particular project. Both were paid for
-during one build and are kept deliberately general.
+None of them mentions this design system, or walks, or any particular project. All four were
+paid for during real builds and are kept deliberately general. The evidence behind them —
+including the lessons that are *not* skill-shaped — is in [`LESSONS.md`](LESSONS.md).
 
 | Skill | What it is |
 |-------|------------|
 | [`verify-what-ships`](.claude/skills/verify-what-ships/SKILL.md) | What to check before claiming a deployed page works. A green deploy is not a live site; a generated config that fails to parse fails silently; nothing at module scope may touch a CDN-loaded library; test with every external origin blocked; cache-bust local assets. Written after a Pages site served its README for a week under a green tick, after one `L.layerGroup()` at module scope killed a whole page, and after a build redirected its own log annotations into the `config.js` it was generating — which made a correctly configured API key look, for a week, like a key the deploy had ignored. |
 | [`changing-course`](.claude/skills/changing-course/SKILL.md) | How to notice an approach is failing and switch, rather than tuning a broken one for hours. Budget the approach, not just the task. Adding parameters is a rewrite signal. The user raising the same thing twice outranks your sense of progress. Written after six slow CI rounds on a heuristic that a simpler algorithm then replaced in twenty minutes. |
+| [`briefing-agents`](.claude/skills/briefing-agents/SKILL.md) | How to write a brief another agent can succeed at, and how to check what comes back. Give an oracle, not a warning. Make the acceptance test a number. Confirm the gap is real before filling it. Written after one agent given 1,851 labelled rows produced work that held up, and another given only a written warning captured 16% of a corpus and reported success — and after a write-up whose CSV was correct throughout cited two identifiers that do not exist. |
+| [`data-plumbing`](.claude/skills/data-plumbing/SKILL.md) | How to build on somebody else's data without silently corrupting it. Undocumented APIs truncate and return HTTP 200. Check the query plan, not the stopwatch. A wrong identifier is worse than a missing one. Written after a "fix" that cut 18 minutes to 19 seconds while reading the same 139 million rows, and after an obvious join remedy inflated results by 1,439 rows against the 19 it was meant to fix. |
 
-Install either one for every repo on your machine:
+Install any of them for every repo on your machine:
 
 ```bash
-for s in verify-what-ships changing-course; do
+for s in verify-what-ships changing-course briefing-agents data-plumbing; do
   mkdir -p ~/.claude/skills/$s
   curl -fsSL https://raw.githubusercontent.com/nihilisticiconoclast/cuddly-lamp/main/.claude/skills/$s/SKILL.md \
     -o ~/.claude/skills/$s/SKILL.md
