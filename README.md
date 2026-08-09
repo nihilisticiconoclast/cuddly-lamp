@@ -83,6 +83,13 @@ For **Claude Code on the web**, `~/.claude` is invisible — a cloud session onl
 committed. Copy the directory into the target repository's `.claude/skills/` instead, exactly
 as `dist/skill/` is copied for the aesthetic.
 
+For **Claude apps** — claude.ai, desktop, mobile — use
+[`dist/chat-skill/`](dist/chat-skill/) instead: the same four skills' material as one
+cohesive document, organised around the thing they have in common rather than by which build
+paid for it. Four narrow triggers are an advantage mid-task and a liability in conversation,
+so that build is one skill, not four. Zip the folder, upload it under **Settings →
+Capabilities → Skills**, and don't install both versions.
+
 ## Quick start
 
 Link the locked layer, mount the fixed logo, and drop a per-page doodle:

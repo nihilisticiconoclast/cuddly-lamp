@@ -461,6 +461,12 @@ skills:
 | [`briefing-agents`](.claude/skills/briefing-agents/SKILL.md) | 13–19 | Writing a brief; reviewing what came back |
 | [`data-plumbing`](.claude/skills/data-plumbing/SKILL.md) | 20–28 | Third-party APIs, metered databases, joins |
 
+For **Claude apps** rather than Claude Code, the same material is packaged as a
+single skill in [`dist/chat-skill/`](dist/chat-skill/) — lessons 1–28 minus 12,
+reorganised around what they have in common instead of by which build paid for
+them. A chat turn rarely announces which of four situations it is, so four
+competing descriptions trigger worse there than one.
+
 **Lesson 12 is deliberately not a skill.** Which projects to take on is decided
 before any agent is running, by a person, and a skill that fires at the wrong
 moment is worse than a file nobody opens. The same goes for the summary above —
